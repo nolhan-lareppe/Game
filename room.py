@@ -7,6 +7,11 @@ class Room:
         self.name = name
         self.description = description
         self.exits = {}
+
+        self.has_given_key = False
+
+    def on_enter(self, game):
+        pass
     
     # Define the get_exit method.
     def get_exit(self, direction):
@@ -28,4 +33,8 @@ class Room:
 
     # Return a long description of this room including exits.
     def get_long_description(self):
-        return f"\nVous êtes {self.description}\n\n{self.get_exit_string()}\n"
+        
+        if hasattr(self, "on_enter") and self.on_enter is not None:
+            # Appeler l’action automatique SANS arguments
+            self.on_enter_callback = True
+        return f"\n{self.description}\n\n{self.get_exit_string()}\n"
