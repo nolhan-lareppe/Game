@@ -218,7 +218,7 @@ class Actions:
             #    player.child_talk.count = 0
             
             
-            if player.child_talk_count < 4:
+            if player.child_talk_count < 2:
                 print("\nL'enfant recule encore... Il a peur de vous.")
                 print("Essayer encore ? (Yes / No)")
                 return True
@@ -228,9 +228,14 @@ class Actions:
             next_room = game.find_room("enfant_secret")
             player.current_room = next_room
 
+            papier_name = {
+            "name": "papier","description": "Un petit papier froissé où l’enfant a écrit dessus : HoooOOOoooOOO… Gaspard HoooOOOoooOOO…."}
+            
+            player.inventory.add_item(papier_name)
 
-                
+
             print("\n✨ L'enfant prend confiance en vous...")
+            print("\nIl vous donne un secret papier. ")
             print(next_room.get_long_description())
             return True
 
@@ -481,6 +486,59 @@ class Actions:
         else:
             print("\nIl n'y a pas de viking ici.")
             return False
+        
+
+
+    
+    def gaspard_action(game, list_of_words, number_of_parameters):
+        player = game.player
+        room = player.current_room
+
+        if not hasattr(player, "gaspard_try"):
+            player.gaspard_try = 0
+
+        player.gaspard_try += 1
+
+
+        if player.gaspard_try > 3:
+
+            print("\n👻 Gaspard pousse un hurlement spectral !")
+            print("Une force invisible vous projette hors de la maison hantée !")
+            player.current_room = game.find_room("village2")
+            print("\nVous vous retrouvez sonné sur la place du village...")
+            print(player.current_room.get_long_description())
+            return True
+        
+        if player.gaspard_try < 3:
+
+            print("\n👻 Gaspard vous fixe avec méfiance...")
+            print("Essayer encore ? (Yes / No)")
+            return True
+        
+        if player.gaspard_try == 3:
+
+            print("\n✨ Le fantôme Gaspard vous accepte enfin...")
+            print("Il laisse tomber un objet spectral au sol !")
+
+            reward = "Lame de spectre"
+            player.inventory.add_items(reward)
+
+
+            if "gaspard" in room.exits:
+                del room.exits["gaspard"]
+
+
+            
+            secret_room = game.find_room("gaspard_secret")
+            if secret_room:
+                player.current_room = secret_room
+                print(secret_room.get_long_description())
+            return True
+            
+
+
+
+
 
 
 
@@ -761,6 +819,9 @@ class Actions:
     
     def enfant_talk_action(game, list_of_words, number_of_parameters):
         player = game.player
+        room = player.current_room     
+            
+     
 
         # Incrémenter le compteur
         player.enfant_talk_count += 1
@@ -773,11 +834,44 @@ class Actions:
 
         # 3ème tentative → révélation
         else:
+            secret_name = "Secret de l'enfant"
+            player.inventory.add_item(secret_name)
+            
             print("\nL'enfant finit par vous faire confiance...")
-            print("Il vous dévoile un secret sur le village !")
+            print("Il vous donne un papier où un secret sur le village est écrit dessus !")
+
+
             player.current_room = game.rooms_by_name["enfant_secret"]
             print(player.current_room.get_long_description())
             return True
+        
+    
+
+    def lire(game, list_of_words, number_of_parameters):
+        player = game.player
+
+
+        if  len(list_of_words) != 2:
+            print("Usage : lire <objet>")
+            return False
+
+
+        
+        objet = list_of_words[1]
+
+
+
+             # Recherche dans l’inventaire
+        for item in player.inventory.items:
+            if isinstance(item, dict) and item["name"] == objet:
+                print("\nVous lisez le papier :")
+                print(f"📜 {item['description']}")
+                return True
+
+        print(f"❌ Vous n'avez aucun objet nommé '{objet}' dans votre inventaire.")
+        return False
+
+
 
 
         
