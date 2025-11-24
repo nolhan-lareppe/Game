@@ -13,7 +13,12 @@ class Inventory:
     def add_item(self, item):
         if len(self.items) < self.capacity:
             self.items.append(item)
-            print(f"Vous avez ajouté '{item}' à votre inventaire.")
+            
+            if isinstance(item, dict):
+                print(f"Vous avez ajouté '{item}' à votre inventaire.")
+            else:
+                print(f"Vous avez ajouté '{item}' à votre inventaire.")
+
             return True
         else:
             print("Votre inventaire est plein | Impossible d'ajouter un objet.")
@@ -35,4 +40,9 @@ class Inventory:
         else:
             print("Inventaire :")
             for i, item in enumerate(self.items, start=1):
-                print(f"{i}.{item}" )
+                if isinstance(item, dict):
+
+                    print(f"{i}. {item['name']}")
+                else:
+
+                    print(f"{i}.{item}" )

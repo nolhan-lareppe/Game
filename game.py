@@ -115,6 +115,8 @@ class Game:
         enter = Command("enter", "entrer dans la maison", Actions.enter_maison, 0)
         self.commands["enter"] = enter
 
+        lire = Command("lire","lire ....", Actions.lire, 0)
+        self.commands["lire"] = lire
 
 
 
@@ -206,8 +208,15 @@ class Game:
         maison = Room("maison", "Une maison qui semble avoir une malédiction.")
         self.rooms.append(maison)
 
-        enter_maison = Room("enter maison", "Rentrer dans la maison hantee.")#Si et seulement si possède la Clé du garde
+        enter_maison = Room("enter maison", "Vous Rentrez dans la maison hantée et vous entendez une sorte de voix.")#Si et seulement si possède la Clé du garde
         self.rooms.append(enter_maison)
+
+        gaspard_room = Room("Gaspard", "Vous rencontrez Gaspard, un petit garçon mystérieux. Il semble prêt à vous confier un objet secret.")
+        self.rooms.append(gaspard_room)
+
+        
+
+
         #Fin enfant
 
 
@@ -271,6 +280,9 @@ class Game:
 
         maison.exits = {"enter" : self.find_room("maison"), "village" : village2}
         #enter_maison = {""}
+        
+
+        gaspard_room.exits= {"Gaspard" : self.find_room("gaspard"), "village" : village2}
 
         
 
