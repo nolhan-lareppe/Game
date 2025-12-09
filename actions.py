@@ -1,4 +1,5 @@
 # Description: The actions module.
+import inspect
 
 # The actions module contains the functions that are called when a command is executed.
 # Each function takes 3 parameters:
@@ -55,7 +56,7 @@ class Actions:
     def close_health(game, list_of_words, number_of_parameters):
 
         player = game.player
-        print("\nVous quittez la jauge de vie et retournez en jeu :")
+        #print("\nVous quittez la jauge de vie et retournez en jeu :")
         print(player.current_room.get_long_description())
         return True
 
@@ -93,18 +94,75 @@ class Actions:
         """
         
         player = game.player
+
         l = len(list_of_words)
+
         # If the number of parameters is incorrect, print an error message and return False.
         if l != number_of_parameters + 1:
             command_word = list_of_words[0]
-            print(MSG1.format(command_word=command_word))
+
+            
+            print(MSG1.format(command_word=list_of_words[0]))
             return False
 
+        target = list_of_words[1]
+
+        if target in player.current_room.exits:
+            next_room = player.current_room.exits[target]
+
+            player.previous_rooms.append(player.current_room)
+
+            player.current_room = next_room
+            #player.move(target, game)
+            #return True
+
+
+            if hasattr(next_room, "on_enter") and callable(next_room.on_enter):
+            # Passer game et valeurs par défaut pour que ça fonctionne
+                import inspect
+                sig = inspect.signature(next_room.on_enter)
+                if len (sig.parameters) == 1:
+
+                    next_room.on_enter(game)
+                else:
+                
+                    next_room.on_enter(game, [target], 0)
+
+                print("\n" + next_room.get_long_description())
+                return True
+
+        
+        
+        elif target in game.commands:
+            command = game.commands[target]
+            command.action(game, [target], command.number_of_parameters)
+            return True
+        
+
+        print("Aucune porte ni action dans cette direction !", target)
+        return False
+        
+        #elif hasattr(Actions, target):
+        #    action_func = getattr(Actions, target)
+        #    action_func(game, [target], 0)
+        #    return True
+        
+
+        
         # Get the direction from the list of words.
-        direction = list_of_words[1]
+        #direction = list_of_words[1]
         # Move the player in the direction specified by the parameter.
-        player.move(direction)
-        return True
+        #player.move(direction)
+
+        
+    
+    
+        
+    
+
+        
+    
+        
 
     def quit(game, list_of_words, number_of_parameters):
         """
@@ -381,7 +439,9 @@ class Actions:
 
         if hasattr(player, "visited_npcs") and "barman" in player.visited_npcs:
             print("Le barman ne peut plus vous servir d'autre verre.")
-            del current_room.exits["barman"]
+            
+            if "barman" in current_room.exits:
+                del current_room.exits["barman"]
             
             return False
 
@@ -399,8 +459,8 @@ class Actions:
         current_room.has_verre = True
 
         return True
+    
 
-        
         
 
         
@@ -610,9 +670,11 @@ class Actions:
                 return False
 
         if "Clé du garde" not in game.player.inventory.items:
-            print("🔒 La porte est verrouillée. Il vous faut la clé du garde !")
+            
             player.current_room = game.find_room("village2")
+            print("🔒 La porte est verrouillée. Il vous faut la clé du garde !")
             print("\nVous êtes renvoyé sur la place du village.")
+
             print(player.current_room.get_long_description())
             return False
         
@@ -870,6 +932,19 @@ class Actions:
 
         print(f"❌ Vous n'avez aucun objet nommé '{objet}' dans votre inventaire.")
         return False
+
+
+
+
+    def retour(game, params, nb_params):
+        if game.player.previous_rooms:
+        # Prendre la dernière salle visitée
+            last_room = game.player.previous_rooms.pop()
+            game.player.current_room = last_room
+            print(f"Vous retournez à la salle précédente : {last_room.name}")
+            print(last_room.get_long_description())
+        else:
+            print("Vous n'avez pas de salle précédente.")
 
 
 
