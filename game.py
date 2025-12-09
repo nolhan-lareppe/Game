@@ -67,6 +67,15 @@ class Game:
 
         barman = Command("barman", " : aller voir le barman",Actions.barman, 0)
         self.commands["barman"] = barman
+
+
+
+        barman_room = Room("barman_room", "Vous vous approchez du barman.")
+        barman_room.on_enter = Actions.barman
+
+
+
+
         
         fee = Command("fee" ," : aller voir la fée", Actions.fee, 0)
         self.commands["fee"] = fee
@@ -74,6 +83,9 @@ class Game:
         viking = Command("viking" ," :  aller voir le viking",Actions.viking, 0)
         self.commands["viking"] = viking
         
+
+        gaspard = Command("gaspard", " .....", Actions.gaspard_action, 0)
+        self.commands["gaspard"] = gaspard
         
         #LIEU
         
@@ -115,8 +127,13 @@ class Game:
         enter = Command("enter", "entrer dans la maison", Actions.enter_maison, 0)
         self.commands["enter"] = enter
 
-        lire = Command("lire","lire ....", Actions.lire, 0)
+        lire = Command("lire"," ....", Actions.lire, 0)
         self.commands["lire"] = lire
+
+
+        retour_cmd = Command("retour", " : revenir à la salle précédente", Actions.retour, 0)
+        self.commands["retour"] = retour_cmd
+
 
 
 
@@ -208,7 +225,7 @@ class Game:
         maison = Room("maison", "Une maison qui semble avoir une malédiction.")
         self.rooms.append(maison)
 
-        enter_maison = Room("enter maison", "Vous Rentrez dans la maison hantée et vous entendez une sorte de voix.")#Si et seulement si possède la Clé du garde
+        enter_maison = Room("enter maison", "Vous rentrez dans la maison hantée et vous entendez une sorte de voix.")#Si et seulement si possède la Clé du garde
         self.rooms.append(enter_maison)
 
         gaspard_room = Room("Gaspard", "Vous rencontrez Gaspard, un petit garçon mystérieux. Il semble prêt à vous confier un objet secret.")
@@ -235,24 +252,35 @@ class Game:
         #Exists mes rooms
 
         #Début de l'histoire
-        entree_village.exits = {"Yes" : garde_talk, "No" : garde_dodge}
+        entree_village.exits = {"Yes" : garde_talk, "No" : garde_dodge, "garde" : garde_talk, "village" : garde_dodge}
         
         garde_talk.exits = { "suite" : village_enter}
 
         
         garde_dodge.exits = { "suite" : village_enter}
         
-        village_enter.exits = {"Yes" : auberge, "No" : village}
+        village_enter.exits = {"Yes" : auberge, "No" : village, "auberge" : auberge, "village":village}
         
 
 
         #Auberge
 
-        auberge.exits = {"barman" : barman, "fee" : fee, "viking" : viking, "village": village}
+        barman_room = Room("barman_room", ".............")
+        barman_room.on_enter = Actions.barman
+        self.rooms.append(barman_room)
+        
+        
 
-        barman.exits = {"Yes": verre, "No" : auberge} #en retirant barman du dico d'auberge
+        auberge.exits = {"barman" : barman_room,"fee" : fee, "viking" : viking, "village": village}
+
+        
+        #barman.on_enter = Actions.barman
+        #barman.exits = {"Yes": verre, "No" : auberge} #en retirant barman du dico d'auberge
+
+        
+        
         verre.exits = {"suite" : auberge}
-
+        
 
         fee.exits = {"Yes" : potion, "No" : auberge} #en retirant fee du dico d'auberge
         potion.exits = {"Yes": auberge, "No" : auberge} #en retirant le nb écu si yes de l'inventaire 
@@ -278,13 +306,27 @@ class Game:
 
         village2.exits = {"maison": maison}
 
+        
+        
+        maison = self.find_room("maison")
+        enter_maison = self.find_room("enter maison")
+        gaspard_room = self.find_room("Gaspard")
+        gaspard_secret = self.find_room("gaspard_secret")
+
+        village2 = self.find_room("village2")
+        
+        
         maison.exits = {"enter" : self.find_room("maison"), "village" : village2}
-        #enter_maison = {""}
+        enter_maison.exits = {"Gaspard" : self.find_room("gaspard_room"), "village" : village2}
         
 
-        gaspard_room.exits= {"Gaspard" : self.find_room("gaspard"), "village" : village2}
+        gaspard_room.exits= {"Gaspard" : self.find_room("gaspard"), "village":village2}
 
         
+    
+
+
+
 
         # Setup player and starting room
 

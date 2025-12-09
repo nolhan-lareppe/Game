@@ -39,4 +39,6 @@ class Health:
         Affiche les points de vie actuels.
         """
         print(f"❤️ Santé : {self.current_hp}/{self.max_hp}")
+
+
     
