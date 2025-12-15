@@ -65,23 +65,22 @@ class Game:
 
         #Choix multiple de personnage
 
-        barman = Command("barman", " : aller voir le barman",Actions.barman, 0)
-        self.commands["barman"] = barman
+        #barman = Command("barman", " : aller voir le barman",Actions.barman, 0)
+        #self.commands["barman"] = barman
 
 
 
-        barman_room = Room("barman_room", "Vous vous approchez du barman.")
-        barman_room.on_enter = Actions.barman
+        
 
 
 
 
         
-        fee = Command("fee" ," : aller voir la fée", Actions.fee, 0)
-        self.commands["fee"] = fee
+        #fee = Command("fee" ," : aller voir la fée", Actions.fee, 0)
+        #self.commands["fee"] = fee
 
-        viking = Command("viking" ," :  aller voir le viking",Actions.viking, 0)
-        self.commands["viking"] = viking
+        #viking = Command("viking" ," :  aller voir le viking",Actions.viking, 0)
+        #self.commands["viking"] = viking
         
 
         gaspard = Command("gaspard", " .....", Actions.gaspard_action, 0)
@@ -187,6 +186,11 @@ class Game:
         verre = Room("verre", "Le barman vous offre un verre pour seulement 5 écu")
         self.rooms.append(verre)
 
+
+        #barman_room = Room("barman_room", "Vous vous approchez du barman derrière son comptoir.")
+        #barman_room.on_enter = Actions.barman
+        #self.rooms.append(barman_room)
+
         
         fee = Room("fee", "Vous donne une potion magique dont vous ne connaissez pas les effets.")        
         self.rooms.append(fee)
@@ -265,13 +269,28 @@ class Game:
 
         #Auberge
 
-        barman_room = Room("barman_room", ".............")
+        barman_room = Room("barman_room", " Barman  ")
         barman_room.on_enter = Actions.barman
         self.rooms.append(barman_room)
+
+        fee_room = Room("fee_room", "Fée")
+        fee_room.on_enter = Actions.fee
+        self.rooms.append(fee_room)
+
+        viking_room = Room("viking_room", "Viking")
+        viking_room.on_enter = Actions.viking
+        self.rooms.append(viking_room)
+
+        
+
+        
+
+
+    
         
         
 
-        auberge.exits = {"barman" : barman_room,"fee" : fee, "viking" : viking, "village": village}
+        auberge.exits = {"barman" : barman_room,"fee" : fee_room, "viking" : viking_room, "village": village}
 
         
         #barman.on_enter = Actions.barman
