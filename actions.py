@@ -426,6 +426,8 @@ class Actions:
         player = game.player
         current_room = player.current_room
 
+        auberge = game.find_room("auberge")
+
         #if "barman" in current_room.exits:
         #    next_room = current_room.exits["barman"]
         #    player.current_room = next_room
@@ -437,17 +439,31 @@ class Actions:
 
 
 
-        if hasattr(player, "visited_npcs") and "barman" in player.visited_npcs:
-            print("Le barman ne peut plus vous servir d'autre verre.")
+        if not hasattr(player, "visited_npcs"): 
+            #and "barman" in player.visited_npcs:
+            #print("Le barman ne peut plus vous servir d'autre verre.")
+            player.visited_npcs = set()
             
-            if "barman" in current_room.exits:
-                del current_room.exits["barman"]
+            if "barman" in player.visited_npcs and not getattr(current_room, "has_verre", False):
+                print("🍺 Le barman : « Désolé, je ne peux plus vous servir. »")
+                print(auberge.get_long_description())
+    
+                return True
+                
+                #del current_room.exits["barman"]
             
-            return False
+
 
         # Première rencontre
         print("Le barman vous sourit : 'Voulez-vous une bière pour seulement 5 écus.'")
         print("Tape 'buy' pour l’acheter ou 'No' pour repartir.")
+
+        
+        current_room.has_verre = True
+        
+        if "barman" in auberge.exits:
+            del auberge.exits["barman"]
+        return True
     
         # Marque que le barman a été rencontrée
         if not hasattr(player, "visited_npcs"):
@@ -473,6 +489,8 @@ class Actions:
         player = game.player
         current_room = player.current_room
 
+        auberge = game.find_room("auberge")
+
         if not hasattr(player, "visited_npcs"):
             player.visited_npcs = set()
 
@@ -480,16 +498,26 @@ class Actions:
         # Vérifie si la fée a déjà été rencontrée
         if "fee" in player.visited_npcs:
             print("✨ La fée n’est plus ici, elle est déjà partie dans la forêt.")
-            if "fee" in current_room.exits:
-                del current_room.exits["fee"]
+            #if "fee" in player.visited_npcs:
+                #del current_room.exits["fee"]
+            player.current_room = auberge
+            print(auberge.get_long_description())
 
             
-            return False
+            return True
 
         # Première rencontre
         print("🧚‍♀️ La fée vous sourit : 'Je peux te vendre une potion magique pour 20 écus.'")
         print("Tape 'buy' pour l’acheter ou 'No' pour repartir.")
 
+        player.visited_npcs.add("fee")
+        current_room.has_potion = True
+
+        if "fee" in auberge.exits:
+            del auberge.exits["fee"] 
+
+        return True
+        
         # Indique que la fée a une potion disponible
         current_room.has_potion = True
 
@@ -800,6 +828,16 @@ class Actions:
 
             print("🍺 Vous achetez une bière !")
             print(f"💰 Il vous reste {player.gold} écus.")
+
+            if "barman" in current_room.exits:
+                del current_room.exits["barman"]
+
+            auberge = game.find_room("auberge")
+            player.current_room = auberge
+            
+            print("\nVous retournez vous asseoir dans l’auberge.")
+            print(current_room.get_long_description())
+            
             return True
         
         
