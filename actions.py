@@ -538,42 +538,49 @@ class Actions:
 
         if hasattr(player, "visited_npcs") and "viking" in player.visited_npcs:
             print("✨ Vous ne voulez plus parler au viking.")
-            return False
+            return True
+        
+        if not hasattr(player, "visited_npcs"):
+            player.visited_npcs = set()
+        player.visited_npcs.add("viking")
+
 
         # Vérifie si la sortie "viking" existe depuis la salle actuelle
-        if "viking" in current_room.exits:
-            next_room = current_room.exits["viking"]
-            player.current_room = next_room
+        #if "viking" in current_room.exits:
+        #    next_room = current_room.exits["viking"]
+        #    player.current_room = next_room
 
             # Le viking attaque !
-            print("\n🪓 Le viking vous remarque et vous attaque !")
+        print("\n🪓 Le viking vous remarque et vous attaque !")
         
             # Le joueur prend des dégâts
-            player.health.take_damage(10)
+        player.health.take_damage(10)
         
             # Étape 4 — Affiche les PV restants après le coup
-            player.health.show_health()
+        player.health.show_health()
 
             # Si le joueur est mort → fin du jeu
-            if player.health.is_dead():
+        if player.health.is_dead():
                 print("\n💀 Le viking vous a vaincu... GAME OVER 💀")
                 game.finished = True
                 return True
             
-            del current_room.exits["viking"]
+        del current_room.exits["viking"]
             
 
             
                 
-            
+        print("\nLe viking éclate de rire et vous tourne le dos.")
+        return True
             # Sinon, on affiche la salle du viking
-            print("\n" + next_room.get_long_description())
+            #print("\n" + next_room.get_long_description())
 
             
-            return True
-        else:
-            print("\nIl n'y a pas de viking ici.")
-            return False
+            #return True
+        
+    
+            #print("\nIl n'y a pas de viking ici.")
+            #return False
         
 
 
@@ -806,6 +813,8 @@ class Actions:
 
             if "fee" in current_room.exits:
                 del current_room.exits["fee"]
+            auberge = game.find_room("auberge")
+            player.current_room = auberge
 
             print(f"🧪 Vous avez acheté une {potion_name} pour {potion_price} écus.")
             print(f"💰 Il vous reste {player.gold} écus.")
@@ -840,7 +849,41 @@ class Actions:
             
             return True
         
+
+        # ================= FORGERON =================
+        if getattr(game, "current_vendor", None) == "forgeron":
+            
+            
+            if len(list_of_words) != 2:
+                print("Usage : buy <arme>")
+                return False
+
+            item = list_of_words[1]
+
+            armes = Actions.FORGERON_ARMES
+
+            if item not in armes:
+                print("❌ Le forgeron ne vend pas cette arme.")
+                return False
+
+            arme = armes[item]
+
+            if player.gold < arme["price"]:
+                print("💸 Vous n'avez pas assez d'écus.")
+                return False
+
+        # Achat
+            player.gold -= arme["price"]
+            player.weapon = arme
+
+            print(f"\n⚔️ Vous achetez : {arme['name']}")
+            print(f"💥 Dégâts : {arme['damage']}")
+            print(f"💰 Il vous reste {player.gold} écus")
+
+        return True
+
         
+
          # Rien à acheter ici
         print("❌ Il n'y a rien à acheter ici.")
         return False
@@ -983,6 +1026,38 @@ class Actions:
             print(last_room.get_long_description())
         else:
             print("Vous n'avez pas de salle précédente.")
+
+
+    
+    FORGERON_ARMES = { "dague": {"degats": 10, "prix": 15}, "epee": {"degats": 20, "prix": 30}, "marteau": {"degats": 35, "prix": 60}}
+    
+    def forgeron(game, list_of_words, number_of_parameters):
+
+        player = game.player
+        room = player.current_room
+
+
+        print("\nLe forgeron vous regarde attentivement.")
+        print("Je peux te vendre une arme :")
+        print("- dague : 10 dégâts — 15 écus")
+        print("- epee : 20 dégâts — 30 écus")
+        print("- marteau : 35 dégâts — 60 écus")
+        print("\nTape : buy dague / buy epee / buy marteau")
+        print("Ou tape 'retour' pour partir.")
+
+        # On indique au jeu que le joueur est chez le forgeron
+        game.current_vendor = "forgeron"
+        return True
+
+
+
+
+
+
+
+
+
+
 
 
 
