@@ -126,13 +126,15 @@ class Game:
         enter = Command("enter", "entrer dans la maison", Actions.enter_maison, 0)
         self.commands["enter"] = enter
 
-        lire = Command("lire"," ....", Actions.lire, 0)
+        lire = Command("lire"," lire le papier", Actions.lire, 0)
         self.commands["lire"] = lire
 
 
         retour_cmd = Command("retour", " : revenir à la salle précédente", Actions.retour, 0)
         self.commands["retour"] = retour_cmd
 
+
+    
 
 
 
@@ -225,6 +227,9 @@ class Game:
         village2 = Room("village2", "Vous arrivez à la deuxième partie du village.")
         self.rooms.append(village2)
 
+        village3 = Room("village2", "Vous décidez d'avancé dans le village.")
+        self.rooms.append(village3)
+
 
         maison = Room("maison", "Une maison qui semble avoir une malédiction.")
         self.rooms.append(maison)
@@ -234,6 +239,17 @@ class Game:
 
         gaspard_room = Room("Gaspard", "Vous rencontrez Gaspard, un petit garçon mystérieux. Il semble prêt à vous confier un objet secret.")
         self.rooms.append(gaspard_room)
+
+
+        forge_room = Room("Forge", "Vous entrez dans la forge")
+        self.rooms.append(forge_room)
+
+        forgeron = Room("Forgeron", "Vous demandez des renseignements auprès du forgeron.\n Le forgeron vous propose plusieurs armes :\n- Dague : 10 dégâts — 15 écus\n- Épée : 20 dégâts — 30 écus\n- Marteau : 35 dégâts — 60 écus")
+        self.rooms.append(forgeron)
+
+
+
+        
 
         
 
@@ -256,16 +272,16 @@ class Game:
         #Exists mes rooms
 
         #Début de l'histoire
-        entree_village.exits = {"Yes" : garde_talk, "No" : garde_dodge, "garde" : garde_talk, "village" : garde_dodge}
+        entree_village.exits = { "garde" : garde_talk, "village" : garde_dodge}
         
         garde_talk.exits = { "suite" : village_enter}
 
         
         garde_dodge.exits = { "suite" : village_enter}
         
-        village_enter.exits = {"Yes" : auberge, "No" : village, "auberge" : auberge, "village":village}
+        village_enter.exits = {"auberge" : auberge, "village":village3}
         
-
+        
 
         #Auberge
 
@@ -310,6 +326,8 @@ class Game:
         
         village.exits = { "auberge" : auberge, "continuer" : enfant}
         #Suite auberge
+
+        village3.exits = {"continuer" : enfant}
         
         continuer_exits = {"continuer" : enfant, "auberge" : auberge} #en retirant les personnes déjà vu
         
@@ -323,7 +341,7 @@ class Game:
 
         #DEBUT PARTIE 2 DU VILLAGE
 
-        village2.exits = {"maison": maison}
+        village2.exits = {"maison": maison, "forge" : forge_room}
 
         
         
@@ -341,6 +359,13 @@ class Game:
 
         gaspard_room.exits= {"Gaspard" : self.find_room("gaspard"), "village":village2}
 
+
+        #Forge
+
+        forge_room.exits = {"forgeron" : forgeron , "village" : village2}
+
+
+       
         
     
 
