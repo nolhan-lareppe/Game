@@ -12,19 +12,17 @@ class Player():
     # Define the constructor.
     def __init__(self, name):
         self.name = name
-        
-
         self.inventory = Inventory() #inventaire vide 
         self.health = Health(100) #Le joueur commence avec 100PV
-        self.visited_pnj = set() # Les PNJ que le joueur à rencontrer
+        self.visited_npcs = set() # Les PNJ que le joueur à rencontrer
         self.gold = 50 #💰 Le joueur commence avec 50 écus
 
         self.child_talk_count = 0 #initialisation du compteur de fois pour parler à l'enfant
-        
         self.current_room = None
-
         self.previous_rooms = []
     # Define the move method.
+
+
     def move(self, direction, game=None):
         # Get the next room from the exits dictionary of the current room.
         

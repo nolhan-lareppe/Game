@@ -8,7 +8,15 @@ class Room:
         self.description = description
         self.exits = {}
 
+        
+        self.npcs = {}
+        self.on_enter = None
+
         self.has_given_key = False
+
+
+
+
 
     def on_enter(self, game):
         pass

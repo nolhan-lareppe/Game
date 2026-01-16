@@ -46,3 +46,31 @@ class Inventory:
                 else:
 
                     print(f"{i}.{item}" )
+
+
+    def has_item(self, name):
+        for item in self.items:
+            if isinstance(item, dict):
+                if item.get("name","").lower() == name.lower():
+                    return True
+                else:
+                    if item.lower() == name.lower():
+                        return True
+        return False
+    
+
+    def remove_item_by_name(self, name):
+        for item in self.items:
+            if isinstance(item, dict):
+                if item.get("name","").lower() == name.lower():
+                        self.items.remove(item)
+                        return True
+            else:
+                if name.lower() in item.lower():
+                    self.items.remove(item)
+                    return True
+        return False
+            
+            
+
+    

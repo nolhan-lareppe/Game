@@ -88,20 +88,22 @@ class Game:
         
         #LIEU
         
-        village = Command("village" ," : aller dans le village",Actions.village, 0)
-        self.commands["village"] = village
+        #village = Command("village" ," : aller dans le village",Actions.village, 0)
+        #self.commands["village"] = village
 
-        auberge = Command("auberge", " : aller à l'auberge du village.", Actions.auberge, 0)
-        self.commands["auberge"] = auberge
+        #auberge = Command("auberge", " : aller à l'auberge du village.", Actions.auberge, 0)
+        #self.commands["auberge"] = auberge
 
-        maison = Command("maison", " : aller à la maison hantée.", Actions.maison, 0)
-        self.commands["maison"] = maison
+        #maison = Command("maison", " : aller à la maison hantée.", Actions.maison, 0)
+        #self.commands["maison"] = maison
         
 
         #OBJETS
 
-        #give_key = Command("give", " : donne la clé du garde", Actions.give_key, 0)
-        #self.commands["give"] = give_key
+        give_key = Command("give", " : donne la clé du garde", Actions.give, 0)
+        self.commands["give"] = give_key
+
+
 
         use_key = Command("utiliser_key", " : utiliser la clé.", Actions.use_key, 0)
         self.commands["utiliser_key"] = use_key
@@ -117,8 +119,8 @@ class Game:
 
  
 
-        use_potion = Command("utiliser_potion", " : consommer une potion", Actions.use_potion, 0)
-        self.commands["utiler_potion"] = use_potion
+        use_potion = Command("utiliser_potion", " : consommer une potion", Actions.use, 1)
+        self.commands["use"] = use_potion
 
         #maison_hantee_cmd = Command("enter", " : entrer dans la maison hantee", Actions.enter_maison, 0)
         #self.commands["enter"] = maison_hantee_cmd
@@ -133,6 +135,14 @@ class Game:
         retour_cmd = Command("retour", " : revenir à la salle précédente", Actions.retour, 0)
         self.commands["retour"] = retour_cmd
 
+        look = Command("look", "regarde ce qu'il y'a dans la room", Actions.look, 0)
+        self.commands["look"] = look
+
+
+        talk = Command("talk", "aller parler au PNJ", Actions.talk, 0)
+        self.commands["talk"] = talk
+
+        
 
     
 
@@ -174,8 +184,8 @@ class Game:
         self.rooms.append(garde_dodge)
 
 
-        village_enter = Room("entree_village", "Vous êtes maintenant dans le village et apercevez une auberge au loin.\n Y aller ?" )
-        self.rooms.append(village_enter)
+        village_center = Room("village_center", "Vous êtes maintenant dans le village et apercevez une auberge au loin.\n Y aller ?" )
+        self.rooms.append(village_center)
         #fin entrée du village
 
         #Début auberge
@@ -227,7 +237,7 @@ class Game:
         village2 = Room("village2", "Vous arrivez à la deuxième partie du village.")
         self.rooms.append(village2)
 
-        village3 = Room("village2", "Vous décidez d'avancé dans le village.")
+        village3 = Room("village3", "Vous décidez d'avancé dans le village.")
         self.rooms.append(village3)
 
 
@@ -249,12 +259,24 @@ class Game:
 
 
 
-        
+        #Auberge
+
+        barman_room = Room("barman_room", " Barman  ")
+        barman_room.on_enter = Actions.barman
+        self.rooms.append(barman_room)
+
+        fee_room = Room("fee_room", "Fée")
+        fee_room.on_enter = Actions.fee
+        self.rooms.append(fee_room)
+
+        viking_room = Room("viking_room", "Viking")
+        viking_room.on_enter = Actions.viking
+        self.rooms.append(viking_room)
+
 
         
 
 
-        #Fin enfant
 
 
 
@@ -272,31 +294,19 @@ class Game:
         #Exists mes rooms
 
         #Début de l'histoire
-        entree_village.exits = { "garde" : garde_talk, "village" : garde_dodge}
+        entree_village.exits = { "village" : village_center}
+        entree_village.npcs = {"garde" : Actions.garde}
+
+        #garde_talk.exits = { "suite" : village_center}
+        #garde_talk.npcs = {"garde" : Actions.garde}
         
-        garde_talk.exits = { "suite" : village_enter}
-
+        garde_dodge.exits = { "suite" : village_center}
         
-        garde_dodge.exits = { "suite" : village_enter}
-        
-        village_enter.exits = {"auberge" : auberge, "village":village3}
+        village_center.exits = {"auberge" : auberge, "village":village3}
         
         
 
-        #Auberge
-
-        barman_room = Room("barman_room", " Barman  ")
-        barman_room.on_enter = Actions.barman
-        self.rooms.append(barman_room)
-
-        fee_room = Room("fee_room", "Fée")
-        fee_room.on_enter = Actions.fee
-        self.rooms.append(fee_room)
-
-        viking_room = Room("viking_room", "Viking")
-        viking_room.on_enter = Actions.viking
-        self.rooms.append(viking_room)
-
+        
         
 
         
@@ -306,8 +316,8 @@ class Game:
         
         
 
-        auberge.exits = {"barman" : barman_room,"fee" : fee_room, "viking" : viking_room, "village": village}
-
+        auberge.exits = {"village": village}
+        auberge.npcs = {"barman" : Actions.barman, "fee" : Actions.fee, "viking" : Actions.viking}
         
         #barman.on_enter = Actions.barman
         #barman.exits = {"Yes": verre, "No" : auberge} #en retirant barman du dico d'auberge
@@ -362,8 +372,8 @@ class Game:
 
         #Forge
 
-        forge_room.exits = {"forgeron" : forgeron , "village" : village2}
-
+        forge_room.exits = {"village" : village2}
+        forge_room.npcs = {"forgeron" : Actions.forgeron}
 
        
         

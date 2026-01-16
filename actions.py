@@ -99,44 +99,46 @@ class Actions:
 
         # If the number of parameters is incorrect, print an error message and return False.
         if l != number_of_parameters + 1:
-            command_word = list_of_words[0]
-
-            
+            #command_word = list_of_words[0]
             print(MSG1.format(command_word=list_of_words[0]))
             return False
 
         target = list_of_words[1]
+        current_room = player.current_room
 
         if target in player.current_room.exits:
-            next_room = player.current_room.exits[target]
+            next_room = current_room.exits[target]
 
-            player.previous_rooms.append(player.current_room)
+            #if hasattr(next_room, "on_enter") and next_room.on_enter: #and callable(next_room.on_enter):
+            # Passer game et valeurs par défaut pour que ça fonctionne
+            if hasattr(player, "previous_rooms"):
+                player.previous_rooms.append(current_room)
+            else:
+                player.previous_rooms = [current_room]
 
             player.current_room = next_room
-            #player.move(target, game)
-            #return True
+
+
 
 
             if hasattr(next_room, "on_enter") and callable(next_room.on_enter):
-            # Passer game et valeurs par défaut pour que ça fonctionne
-                import inspect
-                sig = inspect.signature(next_room.on_enter)
-                if len (sig.parameters) == 1:
+                next_room.on_enter(game)
 
-                    next_room.on_enter(game)
-                else:
-                
-                    next_room.on_enter(game, [target], 0)
-
-                print("\n" + next_room.get_long_description())
-                return True
-
-        
-        
-        elif target in game.commands:
-            command = game.commands[target]
-            command.action(game, [target], command.number_of_parameters)
+            print(next_room.get_long_description())
             return True
+
+
+            
+        
+        
+        
+             
+        
+        
+            #elif target in game.commands:
+            #    command = game.commands[target]
+            #    command.action(game, [target], command.number_of_parameters)
+            #    return True
         
 
         print("Aucune porte ni action dans cette direction !", target)
@@ -385,9 +387,13 @@ class Actions:
         player = game.player
         current_room = player.current_room
 
-        if hasattr(player, "visited_npcs") and "Yes" in player.visited_npcs:
+        if not hasattr(player, "visited_npcs"): 
+        #and "Yes" in player.visited_npcs:
+            player.visited_npcs = set()
+            
+        if "garde_talk" in player.visited_npcs:
             print("Le garde retourne à son poste et ne veut plus vous parler.")
-            del current_room.exits["garde_talk"]
+            #del current_room.exits["garde_talk"]
             return False
         
     
@@ -413,6 +419,38 @@ class Actions:
         current_room.has_key = True
 
         return True
+    
+    
+
+
+    def give(game, list_of_words, number_of_parameters):
+        """Donne la clé du joueur et l'ajoute dans son inventaire"""
+
+        player = game.player
+        room = player.current_room
+
+
+        if not hasattr(room, "has_key"):
+            room.has_key = True
+        
+        key_name = "Clé du garde"
+
+        if key_name in player.inventory.items:
+            print("❌ Vous avez déjà la clé du garde dans votre inventaire.")
+            return False
+        
+        if getattr(room, "has_key", False):
+            player.inventory.add_item(key_name)
+            room.has_key  = False
+            print(f"✨ Vous recevez {key_name} ! Elle est maintenant dans votre inventaire.")
+            return True
+        else:
+            print("❌ La clé du garde n'est pas disponible ici.")
+            return False
+
+
+
+
 
 
 
@@ -536,12 +574,12 @@ class Actions:
         player = game.player
         current_room = player.current_room
 
-        if hasattr(player, "visited_npcs") and "viking" in player.visited_npcs:
+        if not hasattr(player, "visited_npcs"): #and "viking" in player.visited_npcs:
             print("✨ Vous ne voulez plus parler au viking.")
             return True
         
-        if not hasattr(player, "visited_npcs"):
-            player.visited_npcs = set()
+        #if not hasattr(player, "visited_npcs"):
+            #player.visited_npcs = set()
         player.visited_npcs.add("viking")
 
 
@@ -565,7 +603,7 @@ class Actions:
                 game.finished = True
                 return True
             
-        del current_room.exits["viking"]
+        #del current_room.exits["viking"]
             
 
             
@@ -606,7 +644,7 @@ class Actions:
         
         if player.gaspard_try < 3:
 
-            print("\n👻 Gaspard vous fixe avec méfiance...")
+            print("\n👻 Gaspard le fantôme vous fixe avec méfiance...")
             print("Essayer encore ? (Yes / No)")
             return True
         
@@ -858,10 +896,11 @@ class Actions:
                 print("Usage : buy <arme>")
                 return False
 
-            item = list_of_words[1]
+            item = list_of_words[1].lower()
 
             armes = Actions.FORGERON_ARMES
 
+            
             if item not in armes:
                 print("❌ Le forgeron ne vend pas cette arme.")
                 return False
@@ -875,12 +914,17 @@ class Actions:
         # Achat
             player.gold -= arme["price"]
             player.weapon = arme
+            player.inventory.add_item(arme["name"])
 
             print(f"\n⚔️ Vous achetez : {arme['name']}")
             print(f"💥 Dégâts : {arme['damage']}")
             print(f"💰 Il vous reste {player.gold} écus")
+    
+    #FORGERON_ARMES = {"dague": { "name": "Dague", "damage": 10, "price": 15}, "epee": { "name": "Épée", "damage": 20,"price": 30},"marteau": { "name": "Marteau", "damage": 35, "price": 60}}
 
         return True
+    
+        
 
         
 
@@ -915,6 +959,45 @@ class Actions:
             return False
         
 
+    def use(game, list_of_words, number_of_parameters):
+
+        player = game.player
+
+        if len(list_of_words) < 2:
+            print("Utiliser quoi ?")
+            return False
+        
+        objet = " ".join(list_of_words[1:]).lower()
+        
+
+
+        # POTION
+
+        if "potion" in objet:
+            if player.inventory.remove_item_by_name("potion"):
+                
+                print("🧪 Vous buvez la potion...")
+                player.health.heal(20)
+                player.health.show_health()
+                player.inventory.remove_item_by_name
+                print("✅ La potion a été consommée.")
+                return True
+            else:
+                print("❌ Vous n'avez pas de potion.")
+                return False
+        
+
+        print(f"❌ Vous ne pouvez pas utiliser '{objet}'.")
+        return False
+        
+        
+        
+
+
+            
+            
+            
+            
 
 
 
@@ -1028,9 +1111,8 @@ class Actions:
             print("Vous n'avez pas de salle précédente.")
 
 
-    
-    FORGERON_ARMES = { "dague": {"degats": 10, "prix": 15}, "epee": {"degats": 20, "prix": 30}, "marteau": {"degats": 35, "prix": 60}}
-    
+    FORGERON_ARMES = {"dague": { "name": "Dague", "damage": 10, "price": 15}, "epee": { "name": "Épée", "damage": 20,"price": 30},"marteau": { "name": "Marteau", "damage": 35, "price": 50}}
+
     def forgeron(game, list_of_words, number_of_parameters):
 
         player = game.player
@@ -1049,6 +1131,43 @@ class Actions:
         game.current_vendor = "forgeron"
         return True
 
+
+
+    def look(game, list_of_words, number_of_parameters):
+
+        player = game.player
+        room = player.current_room
+
+        print("\n" + room.description)
+
+        if hasattr(room, "npcs") and room.npcs:
+            print("\n👥Vous voyez ici :")
+            for npc in room.npcs.keys():
+                print(f"-{npc}")
+        
+            
+            return True
+
+    def talk(game, list_of_words, number_of_parameters):
+        player = game.player
+        room = player.current_room
+
+        if len(list_of_words) != 2:
+            print("Usage : talk <personne>")
+            return False
+
+        target = list_of_words[1]
+
+        if not hasattr(room, "npcs") or target not in room.npcs:
+            print(f"❌ Il n'y a personne nommé '{target}' ici.")
+            return False
+
+        npc_action = room.npcs[target]
+    
+
+        npc_action(game, [target], 0)
+
+        return True
 
 
 
