@@ -142,6 +142,15 @@ class Game:
         talk = Command("talk", "aller parler au PNJ", Actions.talk, 0)
         self.commands["talk"] = talk
 
+
+        pierre = Command("pierre", "choisir pierre", Actions.pierre, 0)
+        self.commands["pierre"] = pierre
+
+        papier = Command("papier", "choisir papier", Actions.papier, 0)
+        self.commands["papier"] = papier
+
+        ciseau = Command("ciseau", "choisir ciseau", Actions.ciseau, 0)
+        self.commands["ciseau"] = ciseau
         
 
     

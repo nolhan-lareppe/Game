@@ -1,5 +1,6 @@
 # Description: The actions module.
 import inspect
+import random
 
 # The actions module contains the functions that are called when a command is executed.
 # Each function takes 3 parameters:
@@ -622,51 +623,105 @@ class Actions:
         
 
 
+#=============================================================
+#GASPARD
+
     
     def gaspard_action(game, list_of_words, number_of_parameters):
         player = game.player
         room = player.current_room
 
-        if not hasattr(player, "gaspard_try"):
-            player.gaspard_try = 0
+        if not hasattr(player, "in_pfc"):
+            player.in_pfc = False
 
-        player.gaspard_try += 1
+        if not player.in_pfc:
+            print("\n👻 Gaspard ricane...")
+            print("« Si tu veux mon trésor, bats-moi à Pierre / Papier / Ciseau ! »")
+            print("Tape : pierre / papier / ciseau")
+            player.in_pfc = True
+            return True
+        return True
+        
+    
+    def pierre(game, list_of_words, numbers_of_parameters):
+        return Actions._pfc(game, "pierre")
+    
+    def papier(game, list_of_words, numbers_of_parameters):
+        return Actions._pfc(game, "papier")
+    
+    def ciseau(game, list_of_words, numbers_of_parameters):
+        return Actions._pfc(game, "ciseau")
+    
 
+    def _pfc(game, choix_joueur):
 
-        if player.gaspard_try > 3:
+        import random
 
-            print("\n👻 Gaspard pousse un hurlement spectral !")
-            print("Une force invisible vous projette hors de la maison hantée !")
-            player.current_room = game.find_room("village2")
-            print("\nVous vous retrouvez sonné sur la place du village...")
-            print(player.current_room.get_long_description())
+        player = game.player
+        room = player.current_room
+
+        if not getattr(player, "in_pfc", False):
+            print("❌ Personne ne joue à Pierre / Papier / Ciseau ici.")
+            return False
+        
+        choix_gaspard = random.choice(["pierre", "papier", "ciseau"])
+
+        print(f"\n🧠 Gaspard choisit : {choix_gaspard}")
+
+        #Egalité
+        
+        if choix_joueur == choix_gaspard:
+            print("😐 Égalité ! Rejouons...")
             return True
         
-        if player.gaspard_try < 3:
+        #Victoire
 
-            print("\n👻 Gaspard le fantôme vous fixe avec méfiance...")
-            print("Essayer encore ? (Yes / No)")
-            return True
-        
-        if player.gaspard_try == 3:
+        gagne = (
+            (choix_joueur == "pierre" and choix_gaspard == "ciseau") or
+            (choix_joueur == "papier" and choix_gaspard == "pierre") or
+            (choix_joueur == "ciseau" and choix_gaspard == "papier")
+        )
 
-            print("\n✨ Le fantôme Gaspard vous accepte enfin...")
-            print("Il laisse tomber un objet spectral au sol !")
+        if gagne:
+            print("\n✨ Gaspard hurle de rage ! Tu as gagné !")
 
             reward = "Lame de spectre"
-            player.inventory.add_items(reward)
+            player.inventory.add_item(reward)
 
+            print(f"🗡️ Vous obtenez : {reward}")
+
+            player.in_pfc = False
 
             if "gaspard" in room.exits:
                 del room.exits["gaspard"]
 
-
-            
             secret_room = game.find_room("gaspard_secret")
             if secret_room:
                 player.current_room = secret_room
                 print(secret_room.get_long_description())
+
             return True
+        
+
+        print("\n💀 Gaspard éclate de rire ! Tu as perdu !")
+        print("Une force spectrale te repousse hors de la maison...")
+        player.in_pfc = False
+        player.current_room = game.find_room("village2")
+        print(player.current_room.get_long_description())
+        return True
+        
+
+
+
+
+
+
+
+
+            
+
+
+    
             
 
 

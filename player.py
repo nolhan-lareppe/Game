@@ -20,6 +20,7 @@ class Player():
         self.child_talk_count = 0 #initialisation du compteur de fois pour parler à l'enfant
         self.current_room = None
         self.previous_rooms = []
+
     # Define the move method.
 
 
