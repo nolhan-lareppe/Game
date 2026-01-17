@@ -125,6 +125,10 @@ class Actions:
             if hasattr(next_room, "on_enter") and callable(next_room.on_enter):
                 next_room.on_enter(game)
 
+            if player.milo_state == "suiveur":
+                print("👣 Milo vous suit en regardant derrière lui.")
+
+
             print(next_room.get_long_description())
             return True
 
@@ -271,6 +275,22 @@ class Actions:
         #    next_room.on_enter(game)  # <-- ici on passe bien room
         
 
+        
+        #MILO
+        
+        
+        if hasattr(player, "waiting_milo_choice") and player.waiting_milo_choice:
+            print("\n🙂 Milo soupire de soulagement.")
+            print("« M-merci… je ferai de mon mieux pour t’aider. »")
+
+            player.milo_state = "suiveur"
+            player.waiting_milo_choice = False
+            return True
+        
+        
+        
+        
+        
         if current_room.name == "enfant_talk":
             
             player.child_talk_count += 1
@@ -319,8 +339,13 @@ class Actions:
         if hasattr(next_room, "on_enter") and callable(next_room.on_enter):
             next_room.on_enter(game)
 
+        
+        
+
         print("\n" + next_room.get_long_description())
         return True
+    
+        
 
         
 
@@ -334,14 +359,32 @@ class Actions:
         player = game.player
         current_room = player.current_room
 
+        if hasattr(player, "waiting_milo_choice") and player.waiting_milo_choice:
+            print("\n😢 Milo baisse la tête.")
+            print("« D-d’accord… je vais me cacher alors… »")
+
+            player.milo_state = "absent"
+            player.waiting_milo_choice = False
+            return True
+        
+        
         if "No" in current_room.exits:
             next_room = current_room.exits["No"]
             player.current_room = next_room
             print("\n" + next_room.get_long_description())
             return True
-        else:
-            print("\nIl n'y a rien qui réponde à 'No' ici.")
-            return False
+
+        
+        
+        
+        
+        print("\nIl n'y a rien qui réponde à 'No' ici.")
+        return False
+        
+
+        
+
+        
         
 
     def suite(game, list_of_words, number_of_parameters):
@@ -702,6 +745,8 @@ class Actions:
 
             return True
         
+        
+        #Défaite
 
         print("\n💀 Gaspard éclate de rire ! Tu as perdu !")
         print("Une force spectrale te repousse hors de la maison...")
@@ -710,20 +755,6 @@ class Actions:
         print(player.current_room.get_long_description())
         return True
         
-
-
-
-
-
-
-
-
-            
-
-
-    
-            
-
 
 
 
@@ -1049,21 +1080,6 @@ class Actions:
         
 
 
-            
-            
-            
-            
-
-
-
-
-    
-        
-        
-
-    
-
-
 
 
     #Objets/Actions
@@ -1202,6 +1218,8 @@ class Actions:
         
             
             return True
+        
+
 
     def talk(game, list_of_words, number_of_parameters):
         player = game.player
@@ -1225,6 +1243,42 @@ class Actions:
         return True
 
 
+    def milo(game, list_of_words, number_of_parameters):
+        player = game.player
+
+
+        if player.milo_state == "absent":
+            print("\n😰 Milo tremble :")
+            print("« J-je suis perdu... Tu peux me protéger ? »")
+            print("Tape Yes pour accepter, No pour refuser.")
+            
+            player.waiting_milo_choice = True
+            return True
+        elif player.milo_state == "suiveur":
+            print("Milo est déjà avec vous.")
+            return True
+
+
+    def boss_final(game, list_of_words, nulber_of_parameters):
+        player = game.player
+
+        print("\n👹 Le boss final apparaît !")
+
+        if player.milo_state == "suiveur":
+            print("\n😨 Milo tremble derrière vous...")
+            print("Puis il relève la tête.")
+            print("« J’ai eu peur toute ma vie… mais pas cette fois ! »")
+
+            player.milo_state = "courageux"
+
+            print("✨ Milo attaque le boss par surprise !")
+            print("💥 Le boss est affaibli !")
+
+            # Exemple d’effet
+            #boss.health -= 30
+
+        print("\n⚔️ Le combat commence !")
+        return True
 
 
 

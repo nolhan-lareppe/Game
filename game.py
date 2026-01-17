@@ -248,6 +248,7 @@ class Game:
 
         village3 = Room("village3", "Vous décidez d'avancé dans le village.")
         self.rooms.append(village3)
+        
 
 
         maison = Room("maison", "Une maison qui semble avoir une malédiction.")
@@ -282,6 +283,12 @@ class Game:
         viking_room.on_enter = Actions.viking
         self.rooms.append(viking_room)
 
+        milo_room = self.find_room("village")
+        milo_room.npcs["milo"] = Actions.milo
+
+
+        
+
 
         
 
@@ -313,7 +320,12 @@ class Game:
         
         village_center.exits = {"auberge" : auberge, "village":village3}
         
+        village_center = self.find_room("village_center")
         
+        if not hasattr(village_center, "npcs"):
+            village_center.npcs = {}
+
+        village_center.npcs["milo"] = Actions.milo
 
         
         
@@ -344,6 +356,8 @@ class Game:
         #Fin auberge
         
         village.exits = { "auberge" : auberge, "continuer" : enfant}
+        
+
         #Suite auberge
 
         village3.exits = {"continuer" : enfant}

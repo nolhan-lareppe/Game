@@ -21,6 +21,8 @@ class Player():
         self.current_room = None
         self.previous_rooms = []
 
+        self.milo_state = "absent"
+
     # Define the move method.
 
 
