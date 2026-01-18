@@ -48,6 +48,12 @@ class Game:
         close_health = Command("back", " : ferme la jauge de PV", Actions.close_health,0)
         self.commands["back"] = close_health
         
+        
+        #Ecus
+
+        gold = Command("ecus", " : afficher le nombre d'écus", Actions.show_gold, 0)
+        self.commands["ecus"] = gold
+        
         #Objets
 
         
@@ -151,10 +157,16 @@ class Game:
 
         ciseau = Command("ciseau", "choisir ciseau", Actions.ciseau, 0)
         self.commands["ciseau"] = ciseau
+
+        attaquer = Command("attaquer", ": permet d'attaquer le boss", Actions.attack_boss, 0)
+        self.commands["attaquer"] = attaquer
         
+        esquiver = Command("esquiver", ": permet d'esquiver le boss",Actions.dodge_boss, 0)
+        self.commands["esquiver"] = esquiver
 
-    
 
+        equip = Command("equiper", " : permet d'équiper une arme", Actions.equip_weapon, 1)
+        self.commands["equiper"] = equip
 
 
 
@@ -284,8 +296,24 @@ class Game:
         self.rooms.append(viking_room)
 
         milo_room = self.find_room("village")
+        if not hasattr(milo_room, "npcs"):
+            milo_room.npcs = {}
         milo_room.npcs["milo"] = Actions.milo
 
+        fin_village = Room("fin_village", "Vous arrivez à la fin du village ...")
+        fin_village.on_enter = Actions.milo_rumeur_boss
+        self.rooms.append(fin_village)
+
+
+        boss_room = Room("boss_final", "Vous entrez dans la caverne du boss final, l'air est changé de tension...")
+        boss_room.on_enter = Actions.boss_final
+        self.rooms.append(boss_room)
+
+        fin_village.exits["boss"] = boss_room
+
+        
+
+        
 
         
 
@@ -374,7 +402,7 @@ class Game:
 
         #DEBUT PARTIE 2 DU VILLAGE
 
-        village2.exits = {"maison": maison, "forge" : forge_room}
+        village2.exits = {"maison": maison, "forge" : forge_room, "fin" : fin_village}
 
         
         
@@ -397,6 +425,9 @@ class Game:
 
         forge_room.exits = {"village" : village2}
         forge_room.npcs = {"forgeron" : Actions.forgeron}
+
+        
+
 
        
         

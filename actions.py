@@ -61,6 +61,13 @@ class Actions:
         print(player.current_room.get_long_description())
         return True
 
+    #ECUS
+
+
+    def show_gold(game, list_of_words, number_of_parameters):
+        player = game.player
+        print(f"\n💰 Tu possèdes actuellement {player.gold} écus.")
+        return True
 
     
     
@@ -1172,7 +1179,18 @@ class Actions:
 
 
     def retour(game, params, nb_params):
-        if game.player.previous_rooms:
+        player = game.player
+        
+        if getattr(player, "in_boss_fight", False):
+            print("❌ Impossible de faire marche arrière en plein combat !")
+            return True
+        
+        
+
+
+
+
+        if player.previous_rooms:
         # Prendre la dernière salle visitée
             last_room = game.player.previous_rooms.pop()
             game.player.current_room = last_room
@@ -1183,6 +1201,7 @@ class Actions:
 
 
     FORGERON_ARMES = {"dague": { "name": "Dague", "damage": 10, "price": 15}, "epee": { "name": "Épée", "damage": 20,"price": 30},"marteau": { "name": "Marteau", "damage": 35, "price": 50}}
+
 
     def forgeron(game, list_of_words, number_of_parameters):
 
@@ -1279,17 +1298,164 @@ class Actions:
 
         print("\n⚔️ Le combat commence !")
         return True
+    
+
+    def milo_rumeur_boss(game):
+        player = game.player
+        room = player.current_room
+
+        if room.name != "fin_village":
+            return
+        
+        if getattr(player, "milo_has_talked_rumeur", False):
+            return
+        
+        if player.milo_state in ["suiveur", "courageux"]:
+
+            print("\n😰 Milo murmure à votre oreille :")
+            print("« J’ai entendu une rumeur… Le boss final possède une arme capable de tout détruire !")
+            print("Il faut être prudents… et ne pas se fier à ses forces seules. »")
+
+            player.milo_has_talked_rumeur = True
+
+
+    def boss_final(game, list_of_words=None, numnber_of_parameters=0):
+        player = game.player
+
+        print("\n👹 Le boss final apparaît !")
+
+        player.in_boss_fight = True
+        player.boss_health = 100
+
+        print("\n⚔️ Le combat commence !")
+        print("Tape : attaquer ou esquiver")
+        print(f"💀 Boss : {player.boss_health} PV")
+        print(f"❤️ Vous : {player.health.current_hp}/{player.health.max_hp} PV")
+
+
+        return True
+    
+    
+    def _boss_turn(game):
+        player = game.player
+
+        if player.boss_health <= 0:
+            print("\n🎉 Vous avez vaincu le boss final !")
+            player.in_boss_fight = False
+            return 
+        
+        if player.health.is_dead():
+            print("\n💀 Vous êtes mort... GAME OVER.")
+            game.finished = True
+            return
+        
+        boss_choice = random.choice(["attaquer", "attaquer", "esquiver"])
+
+        #Vérifie si le joueur a esquivé ce tour
+
+        if getattr(player, "esquive_reussie", False):
+            print("🛡️ Vous esquivez l'attaque du boss avec succès !")
+            player.esquive_reussie = False
 
 
 
+        else:
+            if boss_choice == "attaquer":
+                dmg = random.randint(10, 25)
+                print(f"💀 Le boss vous attaque ! ({dmg} dégâts)")
+                player.health.take_damage(dmg)
+
+            else:
+                print("👹 Le boss esquive et se prépare...")
+
+        print(f"\n💀 Boss : {player.boss_health} PV")
+        print(f"❤️ Vous : {player.health.current_hp}/{player.health.max_hp} PV")
+
+            
+            
+            
 
 
 
-
-
-
-
-
+       
         
 
     
+    def attack_boss(game, list_of_words, number_of_parameters):
+        player = game.player
+        
+        if not getattr(player, "in_boss_fight", False):
+            print("Vous n'êtes pas en combat contre le boss.")
+            return True
+        
+        # ATTAQUE SELON L'ARME CHOISIE
+
+        if hasattr(player, "weapon") and player.weapon:
+            dmg = player.weapon["damage"]
+            print(f"⚔️ Vous attaquez le boss avec votre arme ! ({dmg} dégâts)")
+        else:
+            dmg = random.randint(5, 7) #dégat à main nue
+            print(f"⚔️ Vous attaquez le boss à mains nues ! ({dmg} dégâts)")
+
+        player.boss_health -= dmg
+        if player.boss_health < 0:
+            player.boss_health = 0
+
+        Actions._boss_turn(game)
+        return True
+
+
+    def dodge_boss(game, list_of_words, number_of_parameters):
+        player = game.player
+        
+        if not hasattr(game.player, "in_boss_fight"):
+            print("Vous n'êtes pas en combat contre le boss.")
+            return True
+        
+        print("🛡️ Vous tentez d'esquiver...")
+        player.esquive_reussie = random.choice([True, False])
+        Actions._boss_turn(game)
+        return True
+
+    
+    FORGERON_ARMES_DMG = {"dague": { "name": "Dague", "damage": 10}, "epee": { "name": "Épée", "damage": 20},"marteau": { "name": "Marteau", "damage": 35}}
+
+
+
+    def equip_weapon(game, list_of_words, number_of_parameters):
+        player = game.player
+
+
+        if number_of_parameters < 1:
+            print("Équiper quoi ? Exemple : equiper epee")
+            return True
+        
+        weapon_key = list_of_words[1].lower()
+        armes = Actions.FORGERON_ARMES_DMG
+
+
+        if weapon_key not in armes:
+            print("Cette arme n'existe pas.")
+            return True
+
+        weapon = armes[weapon_key]
+
+        inventory_lower = [item.lower() if isinstance(item, str) else item["name"].lower() for item in player.inventory.items]
+        
+        
+        if weapon["name"].lower() not in inventory_lower:
+            print("Vous ne possédez pas cette arme.")
+            return True
+        
+        player.weapon = weapon
+
+        print(f"🗡️ Vous équipez {weapon['name']}.")
+
+        return True
+        
+        
+            
+
+       
+
+        

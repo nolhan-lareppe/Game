@@ -1,6 +1,7 @@
 #Importation
 from inventaire import Inventory
 from health import Health
+from weapon import Weapon
 
 
 
@@ -23,6 +24,10 @@ class Player():
 
         self.milo_state = "absent"
 
+        self.in_boss_fight = False
+        self.last_action = None # garde la dernière action du joueur pour le tour par tour
+        
+        self.weapon = None
     # Define the move method.
 
 
@@ -48,6 +53,13 @@ class Player():
         # Affiche la description de la salle
         print(self.current_room.get_long_description())
         return True
+    
+
+    def equip_weapon(self, weapon):
+         self.weapon = weapon
+         print(f"🗡️ Vous équipez : {weapon.name}")
+         
+    
             
         
         
