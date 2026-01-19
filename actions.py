@@ -1325,7 +1325,7 @@ class Actions:
         print("\n👹 Le boss final apparaît !")
 
         player.in_boss_fight = True
-        player.boss_health = 100
+        player.boss_health = 200
 
         print("\n⚔️ Le combat commence !")
         print("Tape : attaquer ou esquiver")

@@ -37,7 +37,7 @@ class Game:
         inventaire = Command("inventaire", ": afficher votre inventaire", Actions.show_inventory, 0)
         self.commands["inventaire"] = inventaire
 
-        close_inv = Command("back", " : fermer l'inventaire et retourner dans la salle", Actions.close_inventoty, 0)
+        close_inv = Command("back", " : fermer l'inventaire et retourner dans la salle + permet de remettre les propositions de sorties", Actions.close_inventoty, 0)
         self.commands["back"] = close_inv
 
         #HEALTH
@@ -89,7 +89,7 @@ class Game:
         #self.commands["viking"] = viking
         
 
-        gaspard = Command("gaspard", " .....", Actions.gaspard_action, 0)
+        gaspard = Command("gaspard", " : permet d'appeler Gaspard.", Actions.gaspard_action, 0)
         self.commands["gaspard"] = gaspard
         
         #LIEU
@@ -120,7 +120,7 @@ class Game:
         #buy_verre = Command("buy" , " acheter une consommation", Actions.buy, 1)
         #self.commands["buy"] =buy_verre
 
-        buy = Command("buy", " : acheter un truc", Actions.buy, 0)
+        buy = Command("buy", " : acheter un objet", Actions.buy, 0)
         self.commands["buy"] =buy
 
  
@@ -138,14 +138,14 @@ class Game:
         self.commands["lire"] = lire
 
 
-        retour_cmd = Command("retour", " : revenir à la salle précédente", Actions.retour, 0)
+        retour_cmd = Command("retour", " : revenir dans la room précédente", Actions.retour, 0)
         self.commands["retour"] = retour_cmd
 
-        look = Command("look", "regarde ce qu'il y'a dans la room", Actions.look, 0)
+        look = Command("look", "regarde ce qu'il y'a dans l'environnement au autour de soi", Actions.look, 0)
         self.commands["look"] = look
 
 
-        talk = Command("talk", "aller parler au PNJ", Actions.talk, 0)
+        talk = Command("talk", "aller parler à un PNJ", Actions.talk, 0)
         self.commands["talk"] = talk
 
 

@@ -32,7 +32,7 @@ class Health:
         """
         Vérifie si le joueur est mort.
         """
-        return self.current_hp <= 0
+        return self.current_hp <= 1
 
     def show_health(self):
         """

@@ -22,7 +22,19 @@ Il y a pour le moment 5 modules contenant chacun une classe.
 
 ## GAME
 
-C'est un jeu narratif avec des interractions avec des personnages non joueur
+C'est un jeu narratif avec des interractions avec des personnages non joueur, certains personnages peuvent proposer des objets, des jeux ou alors des indices. 
+
+
+## COMMANDE
+
+
+- `go` : permet le déplacement entre une Room à l'autre
+- `help` : permet de voir les commandes 
+- `quit` : permet de quitter le jeu
+- `inventaire` : permet de regarder ce que l'on a dans son inventaire
+- `
+
+ 
 
 
 
