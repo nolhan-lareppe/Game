@@ -14,5 +14,27 @@ Il y a pour le moment 5 modules contenant chacun une classe.
 - `player.py` / `Player` : le joueur ;
 - `command.py` / `Command` : les consignes données par le joueur ;
 - `actions.py` / `Action` : les interactions entre .
+- `weapon.py` / `Weapon` : l'équipement d'armes.
+- `inventaire.py` / `Inventaire` : permet de stocker des objets/armes
+- `health.py` / `Health` : point de vie du joueur ;
+
+
+
+## GAME
+
+C'est un jeu narratif avec des interractions avec des personnages non joueur
+
+
+
+
+
+## OPTIMISAITON
+
+- Quelques optimisation peuvent être faite au niveau du jeu, notamment avec le côté interractif. Au lieu d'utiliser "go" utiliser une commande immersif permettant de répondre directement au PNJ.
+
+- Ajout de plus d'items pour plus de diversité au jeu.
+
+- Au niveau du garde, donner la clé automatiquement plutôt d'utiliser "give"git 
+
 
 
