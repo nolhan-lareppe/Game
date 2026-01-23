@@ -171,6 +171,11 @@ class Game:
 
 
 
+
+        
+
+
+
         
         # Setup rooms
 
@@ -430,9 +435,51 @@ class Game:
         
 
 
-       
+    def _setup_quests(self):
+        """Initialize all quests."""
+        exploration_quest = Quest(
+            title="Grand Explorateur",
+            description="Explorez tous les lieux de ce monde mystérieux.",
+            objectives=["Visiter Auberge"
+                        , "Visiter Forge"
+                        , "Maison"],
+            reward="Titre de Grand Explorateur"
+        )
+
+        travel_quest = Quest(
+            title="Grand Voyageur",
+            description="Déplacez-vous 10 fois entre les lieux.",
+            objectives=["Se déplacer 10 fois"],
+            reward="Bottes de voyageur"
+        )
+
+        discovery_quest = Quest(
+            title="Découvreur de Secrets",
+            description="Découvrez les trois lieux les plus mystérieux.",
+            objectives=["Visiter Cave"
+                        , "Visiter Tower"
+                        , "Visiter Castle"],
+            reward="Clé dorée"
+        )
+
+        # Add quests to player's quest manager
+        self.player.quest_manager.add_quest(exploration_quest)
+        self.player.quest_manager.add_quest(travel_quest)
+        self.player.quest_manager.add_quest(discovery_quest)
+
+
         
     
+
+
+
+
+
+
+
+
+
+
 
 
 
