@@ -173,6 +173,17 @@ class Game:
 
 
         
+        self.commands["quests"] = Command("quests", " : afficher la liste des quêtes", Actions.quests, 0)
+        
+        self.commands["quest"] = Command("quest", " <titre> : afficher les détails d'une quête", Actions.quest, 1)
+        
+        self.commands["activate"] = Command("activate", " <titre> : activer une quête", Actions.activate, 1)
+        
+        self.commands["rewards"] = Command("rewards", " : afficher vos récompenses", Actions.rewards, 0)
+        
+
+
+
 
 
 
