@@ -8,6 +8,7 @@ from command import Command
 from actions import Actions
 from inventaire import Inventory
 from health import Health
+from quest import Quest
 
 
 class Game:
