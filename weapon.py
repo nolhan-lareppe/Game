@@ -11,6 +11,7 @@ class Weapon:
         epee = Weapon("epee", 20)
         marteau = Weapon("marteau", 35)
         lame = Weapon("lame de spectre", 15)
+        
 
 
         

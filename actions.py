@@ -1,5 +1,4 @@
 # Description: The actions module.
-import inspect
 import random
 
 # The actions module contains the functions that are called when a command is executed.
@@ -18,9 +17,6 @@ MSG0 = "\nLa commande '{command_word}' ne prend pas de paramètre.\n"
 # The MSG1 variable is used when the command takes 1 parameter.
 MSG1 = "\nLa commande '{command_word}' prend 1 seul paramètre.\n"
 
-from room import Room
-from inventaire import Inventory
-from health import Health
 
 
 class Actions:
@@ -117,7 +113,6 @@ class Actions:
         if target in player.current_room.exits:
             next_room = current_room.exits[target]
 
-            #if hasattr(next_room, "on_enter") and next_room.on_enter: #and callable(next_room.on_enter):
             # Passer game et valeurs par défaut pour que ça fonctionne
             if hasattr(player, "previous_rooms"):
                 player.previous_rooms.append(current_room)
@@ -151,32 +146,9 @@ class Actions:
              
         
         
-            #elif target in game.commands:
-            #    command = game.commands[target]
-            #    command.action(game, [target], command.number_of_parameters)
-            #    return True
-        
 
         print("Aucune porte ni action dans cette direction !", target)
-        return False
-        
-        #elif hasattr(Actions, target):
-        #    action_func = getattr(Actions, target)
-        #    action_func(game, [target], 0)
-        #    return True
-        
-
-        
-        # Get the direction from the list of words.
-        #direction = list_of_words[1]
-        # Move the player in the direction specified by the parameter.
-        #player.move(direction)
-
-        
-    
-    
-        
-    
+        return False   
 
         
     
@@ -272,18 +244,6 @@ class Actions:
         current_room = player.current_room
 
         # Vérifie que la salle a une sortie 'Yes'
-        #if "Yes" not in current_room.exits:
-            
-        #    print("\nIl n'y a rien qui réponde à 'Yes' ici.")
-        #    return False
-
-        #next_room = current_room.exits["Yes"]
-        #player.current_room = next_room
-            
-            
-        
-        #if hasattr(next_room, "on_enter") and callable(next_room.on_enter):
-        #    next_room.on_enter(game)  # <-- ici on passe bien room
         
 
         
@@ -306,8 +266,6 @@ class Actions:
             
             player.child_talk_count += 1
 
-            #if not hasattr(player, "child_talk_count"):
-            #    player.child_talk.count = 0
             
             
             if player.child_talk_count < 2:
@@ -320,8 +278,7 @@ class Actions:
             next_room = game.find_room("enfant_secret")
             player.current_room = next_room
 
-            papier_name = {
-            "name": "papier","description": "Un petit papier froissé où l’enfant a écrit dessus : HoooOOOoooOOO… Gaspard HoooOOOoooOOO…."}
+            papier_name = {"name": "papier","description": "Un petit papier froissé où l’enfant a écrit dessus : HoooOOOoooOOO… Gaspard HoooOOOoooOOO…."}
             
             player.inventory.add_item(papier_name)
 
@@ -331,15 +288,10 @@ class Actions:
             print(next_room.get_long_description())
             return True
 
-                # Sinon, reste dans enfant_talk
-            next_room = current_room
-            player.current_room = next_room
-            #print("\nL'enfant reste silencieux mais semble un peu plus détendu.")
+                
             
-            #if hasattr(next_room, "on_enter"):
-            #    next_room.on_enter(game)
-            #print("\n" + next_room.get_long_description())
-            #return True
+            
+    
         if "Yes" not in current_room.exits:
             print("\nIl n'y a rien qui réponde à 'Yes' ici.") 
             return False
@@ -521,15 +473,6 @@ class Actions:
 
         auberge = game.find_room("auberge")
 
-        #if "barman" in current_room.exits:
-        #    next_room = current_room.exits["barman"]
-        #    player.current_room = next_room
-        #    print("\n" + next_room.get_long_description())
-        #    return True
-        #else:
-        #    print("\nIl n'y a rien qui réponde à 'barman' ici.")
-        #    return False
-
 
 
         if not hasattr(player, "visited_npcs"): 
@@ -558,16 +501,7 @@ class Actions:
             del auberge.exits["barman"]
         return True
     
-        # Marque que le barman a été rencontrée
-        if not hasattr(player, "visited_npcs"):
-            player.visited_npcs = set()
-            
-        player.visited_npcs.add("barman")
-
-        # Indique que le barman a un verre de disponible
-        current_room.has_verre = True
-
-        return True
+        
     
 
         
@@ -591,8 +525,6 @@ class Actions:
         # Vérifie si la fée a déjà été rencontrée
         if "fee" in player.visited_npcs:
             print("✨ La fée n’est plus ici, elle est déjà partie dans la forêt.")
-            #if "fee" in player.visited_npcs:
-                #del current_room.exits["fee"]
             player.current_room = auberge
             print(auberge.get_long_description())
 
@@ -632,16 +564,8 @@ class Actions:
         if not hasattr(player, "visited_npcs"): #and "viking" in player.visited_npcs:
             print("✨ Vous ne voulez plus parler au viking.")
             return True
-        
-        #if not hasattr(player, "visited_npcs"):
-            #player.visited_npcs = set()
         player.visited_npcs.add("viking")
 
-
-        # Vérifie si la sortie "viking" existe depuis la salle actuelle
-        #if "viking" in current_room.exits:
-        #    next_room = current_room.exits["viking"]
-        #    player.current_room = next_room
 
             # Le viking attaque !
         print("\n🪓 Le viking vous remarque et vous attaque !")
@@ -665,15 +589,10 @@ class Actions:
                 
         print("\nLe viking éclate de rire et vous tourne le dos.")
         return True
-            # Sinon, on affiche la salle du viking
-            #print("\n" + next_room.get_long_description())
+            
 
             
-            #return True
-        
-    
-            #print("\nIl n'y a pas de viking ici.")
-            #return False
+
         
 
 
@@ -867,13 +786,7 @@ class Actions:
             
         return True
 
-            #print("\nVous utilisez la Clé du garde et entrez dans la maison hantée... ")
             
-
-            #print("\nVous ne possédez pas la clé pour rentrer dans cette maison !\nVous décidez de retourner au village.")
-            #village_room = game.find_room("maison hantee")
-            #game.player.current_room = village_room
-            #print(village_room.get_long_description())
 
 
         
@@ -943,8 +856,7 @@ class Actions:
             potion_price = 20
             potion_name = "Potion magique"
             
-            #print("❌ Vous ne pouvez acheter une potion qu’en parlant à la fée.")
-            #return False
+           
 
             # Vérifie l'argent du joueur
             if player.gold < potion_price:
@@ -1036,18 +948,9 @@ class Actions:
 
         
 
-         # Rien à acheter ici
-        print("❌ Il n'y a rien à acheter ici.")
-        return False
+
 
         
-
-
-        # Mise à jour : la fée disparaît
-        current_room.description = "Vous êtes dans l’auberge chaleureuse du village.\nDes rires résonnent, des bougies éclairent les tables, et l’odeur de bière flotte dans l’air.\nLe barman vous salue d’un signe de tête."
-        print("✨ La fée s’envole vers la forêt et disparaît dans un nuage scintillant...")
-
-        return True
 
 
     def use_potion(game, list_of_words, number_of_parameters):
