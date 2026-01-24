@@ -34,6 +34,96 @@ C'est un jeu narratif avec des interractions avec des personnages non joueur, ce
 - `inventaire` : permet de regarder ce que l'on a dans son inventaire
 - `
 
+
+
+## DIAGRAMME 
+
+
+
+classDiagram
+    class Game {
+        -rooms : list
+        -player : Player
+        -commands : dict
+        -health : Health
+        +setup()
+        +play()
+        +process_command(command_string)
+        +find_room(name)
+    }
+
+    class Player {
+        -name : str
+        -current_room : Room
+        -inventory : Inventory
+        -quest_manager : QuestManager
+        -health : Health
+        +add_reward(reward)
+    }
+
+    class Room {
+        -name : str
+        -description : str
+        -exits : dict
+        -npcs : dict
+        -on_enter : function
+        -has_given_key : bool
+        +get_long_description()
+    }
+
+    class Inventory {
+        -items : list
+        +add_item(item)
+        +remove_item(item)
+        +show_inventory()
+    }
+
+    class Health {
+        -points : int
+        +show_health()
+        +modify_health(amount)
+    }
+
+    class Quest {
+        -title : str
+        -description : str
+        -objectives : list
+        -is_active : bool
+        -is_completed : bool
+        -completed_objectives : list
+        -reward : str
+        +activate()
+        +complete_objective(objective)
+        +check_room_objective(room_name)
+        +check_action_objective(action, target)
+        +check_counter_objective(counter_name, current_count)
+        +get_status()
+        +get_details()
+    }
+
+    class QuestManager {
+        -quests : list
+        -active_quests : list
+        -player : Player
+        +add_quest(quest)
+        +activate_quest(title)
+        +check_room_objectives(room_name)
+        +check_action_objectives(action, target)
+        +check_counter_objectives(counter_name, current_count)
+        +get_active_quests()
+        +show_quests()
+        +show_quest_details(title)
+    }
+
+    Game --> Player
+    Game --> Room
+    Game --> QuestManager
+    Player --> Inventory
+    Player --> QuestManager
+    Room --> "0..*" NPCs
+    QuestManager --> Quest
+
+
  
 
 

@@ -2,6 +2,7 @@
 from inventaire import Inventory
 from health import Health
 from weapon import Weapon
+from quest import QuestManager
 
 
 
@@ -28,7 +29,14 @@ class Player():
         self.last_action = None # garde la dernière action du joueur pour le tour par tour
         
         self.weapon = None
+
+        self.quest_manager = QuestManager(self)
+        #self.rewards = []
     # Define the move method.
+    
+    
+    #def add_reward(self, reward):
+    #     self.rewards.append(reward)
 
 
     def move(self, direction, game=None):
@@ -58,6 +66,14 @@ class Player():
     def equip_weapon(self, weapon):
          self.weapon = weapon
          print(f"🗡️ Vous équipez : {weapon.name}")
+
+    
+    def add_reward(self, reward):
+        if not hasattr(self, "rewards"):
+              self.rewards = []
+        self.rewards.append(reward)
+        print(f"🎉 Vous avez reçu : {reward}")
+         
          
     
             

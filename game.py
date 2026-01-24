@@ -15,6 +15,8 @@ class Game:
 
     # Constructor
     def __init__(self):
+        #self.player = Player(input("\nEntrez votre nom:"))
+        
         self.finished = False
         self.rooms = []
         self.commands = {}
@@ -169,19 +171,17 @@ class Game:
         equip = Command("equiper", " : permet d'équiper une arme", Actions.equip_weapon, 1)
         self.commands["equiper"] = equip
 
+        quests = Command("quests", " : fficher la listes des quêtes", Actions.quests, 0)
+        self.commands["quests"] = quests
 
+        quest = Command("quest", " : afficher les détails d'une quête", Actions.quest, 1)
+        self.commands["quest"] = quest
 
+        activate = Command("activate", " : activer une quête", Actions.activate, 1)
+        self.commands["activate"] = activate
 
         
-        self.commands["quests"] = Command("quests", " : afficher la liste des quêtes", Actions.quests, 0)
-        
-        self.commands["quest"] = Command("quest", " <titre> : afficher les détails d'une quête", Actions.quest, 1)
-        
-        self.commands["activate"] = Command("activate", " <titre> : activer une quête", Actions.activate, 1)
-        
-        self.commands["rewards"] = Command("rewards", " : afficher vos récompenses", Actions.rewards, 0)
-        
-
+  
 
 
 
@@ -443,6 +443,12 @@ class Game:
         forge_room.exits = {"village" : village2}
         forge_room.npcs = {"forgeron" : Actions.forgeron}
 
+        # Setup player and starting room
+
+        self.player = Player(input("\nEntrez votre nom: "))
+        self.player.current_room = entree_village
+        self._setup_quests()
+
         
 
 
@@ -450,33 +456,31 @@ class Game:
         """Initialize all quests."""
         exploration_quest = Quest(
             title="Grand Explorateur",
-            description="Explorez tous les lieux de ce monde mystérieux.",
-            objectives=["Visiter Auberge"
-                        , "Visiter Forge"
-                        , "Maison"],
+            description="Explorez tous les lieux dans ce village.",
+            objectives=["Visiter auberge"
+                        , "Visiter forge"],
             reward="Titre de Grand Explorateur"
-        )
-
-        travel_quest = Quest(
-            title="Grand Voyageur",
-            description="Déplacez-vous 10 fois entre les lieux.",
-            objectives=["Se déplacer 10 fois"],
-            reward="Bottes de voyageur"
         )
 
         discovery_quest = Quest(
             title="Découvreur de Secrets",
-            description="Découvrez les trois lieux les plus mystérieux.",
-            objectives=["Visiter Cave"
-                        , "Visiter Tower"
-                        , "Visiter Castle"],
-            reward="Clé dorée"
+            description="Découvrez le secret de la maison hantée.",
+            objectives=["Visiter maison"],
+            reward="Lame Spectrale"
+        )
+
+        fight_boss = Quest(
+            title = "Boss final", 
+            description="Vaincre le boss dans sa caverne.",
+            objectives=["Vaincre le boss final"],
+            reward="Titre du Grand Héros du Village"
         )
 
         # Add quests to player's quest manager
         self.player.quest_manager.add_quest(exploration_quest)
-        self.player.quest_manager.add_quest(travel_quest)
+        #self.player.quest_manager.add_quest(travel_quest)
         self.player.quest_manager.add_quest(discovery_quest)
+        self.player.quest_manager.add_quest(fight_boss)
 
 
         
@@ -495,10 +499,7 @@ class Game:
 
 
 
-        # Setup player and starting room
-
-        self.player = Player(input("\nEntrez votre nom: "))
-        self.player.current_room = entree_village
+        
 
     # Play the game
     def play(self):

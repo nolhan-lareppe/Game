@@ -1452,6 +1452,85 @@ class Actions:
         print(f"🗡️ Vous équipez {weapon['name']}.")
 
         return True
+
+
+
+    def quests(game, words, number_of_parameters):
+        qm = game.player.quest_manager
+
+        if not qm.quests:
+            print("📜 Vous n'avez aucune quête.")
+            return
+        
+        print("\n📜 Quêtes disponibles :")
+        for quest in qm.quests:
+            status = "✅ Active" if quest.is_active else "❌ Inactive"
+            print(f"- {quest.title} ({status})")
+        
+
+    def quest(game, words, number_of_parameters):
+        if len(words) < 2:
+
+            print("❓ Quelle quête ? Exemple : quest Le secret de Gaspard")
+            return
+        
+        quest_name = " ".join(words[1:])
+       # quest_manager = game.player.quest_manager
+
+        quest = game.player.quest_manager.get_quest_by_title(quest_name)
+
+        if quest is None:
+            print("❌ Quête introuvable.")
+            return
+        
+        print(f"\n📜 {quest.title}")
+        print(f"📝 {quest.description}\n")
+
+        print("🎯 Objectifs :")
+        for obj in quest.objectives:
+            if obj in quest.completed_objectives:
+                print(f"  ✅ {obj}")
+            else:
+                print(f"  ⬜ {obj}")
+        print(f"\n🎁 Récompense : {quest.reward}")
+
+        if quest.is_completed:
+            print("🏆 Statut : TERMINÉE")
+        elif quest.is_active:
+            print("🔥 Statut : EN COURS")
+        else:
+            print("⏸️ Statut : NON ACTIVÉE")
+
+    
+    def activate(game, params, number_of_parameters):
+        if len(params) < 2:
+            print("\n⚠️ Veuillez préciser le nom de la quête à activer.\n")
+            return
+        
+        quest_title = " ".join(params[1:])
+
+        success = game.player.quest_manager.activate_quest(quest_title)
+        if not success:
+            print(f"\n❌ Quête '{quest_title}' introuvable ou déjà activée.\n")
+
+
+
+
+    
+
+
+
+
+            
+
+
+
+
+
+
+
+
+
         
         
             
