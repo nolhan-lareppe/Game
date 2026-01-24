@@ -49,6 +49,8 @@ class Quest:
             f"Explorer {room_name}",
             f"Aller à {room_name}",
             f"Entrer dans {room_name}"
+            f"Vaincre {room_name}",
+            f"Vaincre le boss final"
         ]
         for obj in room_objectives:
             if self.complete_objective(obj, player):
@@ -104,4 +106,10 @@ class QuestManager:
         for quest in self.quests:
             if quest.title.lower() == title:
                 return quest
-            return None
+        return None
+
+
+    def check_objective_by_title(self, quest_title, objective):
+        quest = self.get_quest_by_title(quest_title)
+        if quest:
+            quest.complete_objective(objective, self.player)

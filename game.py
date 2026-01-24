@@ -230,6 +230,8 @@ class Game:
 
         auberge = Room("auberge", "Vous rentrez dans l'auberge et trois personnes sont dedans un barman, une fée et un viking")
         self.rooms.append(auberge)
+        auberge.on_enter = lambda game: game.player.quest_manager.check_room_objectives("auberge")
+
 
         barman = Room("barman", "Barman : Désirez-vous prendre un verre ?")
         self.rooms.append(barman)
@@ -282,16 +284,27 @@ class Game:
 
         maison = Room("maison", "Une maison qui semble avoir une malédiction.")
         self.rooms.append(maison)
+        #maison.on_enter = lambda game: game.player.quest_manager.check_room_objectives("maison")
+
 
         enter_maison = Room("enter maison", "Vous rentrez dans la maison hantée et vous entendez une sorte de voix.")#Si et seulement si possède la Clé du garde
         self.rooms.append(enter_maison)
+        enter_maison.on_enter = lambda game: game.player.quest_manager.check_room_objectives("maison")
+
+
 
         gaspard_room = Room("Gaspard", "Vous rencontrez Gaspard, un petit garçon mystérieux. Il semble prêt à vous confier un objet secret.")
         self.rooms.append(gaspard_room)
+        gaspard_room.on_enter = lambda game: game.player.quest_manager.check_room_objectives_by_title("Découvreur de Secrets", "Visiter maison")
+
 
 
         forge_room = Room("Forge", "Vous entrez dans la forge")
         self.rooms.append(forge_room)
+        forge_room.on_enter = lambda game: game.player.quest_manager.check_room_objectives("forge")
+
+
+
 
         forgeron = Room("Forgeron", "Vous demandez des renseignements auprès du forgeron.\n Le forgeron vous propose plusieurs armes :\n- Dague : 10 dégâts — 15 écus\n- Épée : 20 dégâts — 30 écus\n- Marteau : 35 dégâts — 60 écus")
         self.rooms.append(forgeron)
@@ -452,6 +465,13 @@ class Game:
         
 
 
+
+
+
+
+
+#QUETES
+
     def _setup_quests(self):
         """Initialize all quests."""
         exploration_quest = Quest(
@@ -465,11 +485,11 @@ class Game:
         discovery_quest = Quest(
             title="Découvreur de Secrets",
             description="Découvrez le secret de la maison hantée.",
-            objectives=["Visiter maison"],
+            objectives=["Visiter maison", "Découvrir le secret de cette maison"],
             reward="Lame Spectrale"
         )
 
-        fight_boss = Quest(
+        boss_quest = Quest(
             title = "Boss final", 
             description="Vaincre le boss dans sa caverne.",
             objectives=["Vaincre le boss final"],
@@ -480,7 +500,7 @@ class Game:
         self.player.quest_manager.add_quest(exploration_quest)
         #self.player.quest_manager.add_quest(travel_quest)
         self.player.quest_manager.add_quest(discovery_quest)
-        self.player.quest_manager.add_quest(fight_boss)
+        self.player.quest_manager.add_quest(boss_quest)
 
 
         

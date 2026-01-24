@@ -126,6 +126,7 @@ class Actions:
 
             player.current_room = next_room
 
+            
 
 
 
@@ -138,6 +139,9 @@ class Actions:
 
             print(next_room.get_long_description())
             return True
+
+
+           
 
 
             
@@ -684,6 +688,10 @@ class Actions:
         if not hasattr(player, "in_pfc"):
             player.in_pfc = False
 
+        qm = player.quest_manager
+        for quest in qm.active_quests:
+            quest.complete_objective("Découvrir le secret de cette maison", player)
+
         if not player.in_pfc:
             print("\n👻 Gaspard ricane...")
             print("« Si tu veux mon trésor, bats-moi à Pierre / Papier / Ciseau ! »")
@@ -840,16 +848,23 @@ class Actions:
             player.current_room = game.find_room("village2")
             print("🔒 La porte est verrouillée. Il vous faut la clé du garde !")
             print("\nVous êtes renvoyé sur la place du village.")
-
             print(player.current_room.get_long_description())
             return False
+        
+        
         
         
         next_room = game.find_room("enter maison")
         player.current_room = next_room
 
+        if hasattr(player, "quest_manager"):
+            player.quest_manager.check_room_objectives("maison")
+
+
         print("🔑 Vous utilisez la clé du garde et entrez dans la maison hantée...")
         print(next_room.get_long_description())
+        
+            
         return True
 
             #print("\nVous utilisez la Clé du garde et entrez dans la maison hantée... ")
@@ -1342,6 +1357,12 @@ class Actions:
         if player.boss_health <= 0:
             print("\n🎉 Vous avez vaincu le boss final !")
             player.in_boss_fight = False
+
+             
+            if hasattr(player, "quest_manager"):
+                player.quest_manager.check_room_objectives("boss_final")
+            
+            
             return 
         
         if player.health.is_dead():
