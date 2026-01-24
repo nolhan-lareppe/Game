@@ -182,7 +182,7 @@ Classes principales :
 - ```Actions``` : toutes les commandes du joueur
 - ```Inventaire``` : inventaire du joueur
 - ```Health``` : point de vie
-- ```Weapon``` : 
+- ```Weapon``` : arme 
 
 
 
